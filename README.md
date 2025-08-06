@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # fit5032-week1
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -33,3 +34,6 @@ npm run build
 ```sh
 npm run lint
 ```
+=======
+# fit5032
+>>>>>>> 69719c571a38051552a1ffe5756953b256db1888
