@@ -127,9 +127,9 @@ const allFamousWorks = computed(() => {
 
 // Activity 4: Find author by name
 const orwell = computed(() => {
-  return authors.find(author) => author.name === 'Jane Austen'
-  // TODO: CODE TO FIND AUTHOR BY NAME HERE
-})
+  return authors.find((author) => author.name === 'Jane Austen');
+});
+
 
 // Activity 5: Find author by ID
 const austen = computed(() => {

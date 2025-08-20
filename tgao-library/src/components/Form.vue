@@ -2,26 +2,29 @@
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">User Information Form</h1>
+        <!-- 把写好的 JavaScript 验证函数 validateName 应用到 HTML 上 -->
         <form @submit.prevent="submitForm">
           <div class="row mb-3">
-            <div class="col-sm-6">
+            <div class="col-md-6 col-sm-6">
               <label for="username" class="form-label">Username</label>
-              <input
-                type="text"
-                class="form-control"
-                id="username"
-                v-model="formData.username"
-              />
+              <input type="text" class="form-control" id="username"
+                @blur="() => validateName(true)"
+                @input="() => validateName(false)"
+                v-model="formData.username" />
+                <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
             </div>
-            <div class="col-sm-6">
+
+            <div class="col-md-6 col-sm-6">
               <label for="password" class="form-label">Password</label>
               <input
                 type="password"
                 class="form-control"
                 id="password"
+                @blur="() => validatePassword(true)"
+                @input="() => validatePassword(false)"
                 v-model="formData.password"
               />
+              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
             </div>
           </div>
 
@@ -100,7 +103,8 @@
 <script setup>
 // Our logic will go here
 import { ref } from 'vue';
-  
+
+//保存表单数据
 const formData = ref({
     username: '',
     password: '',
@@ -109,13 +113,73 @@ const formData = ref({
     gender: ''
 });
 
+//存储错误信息
+const errors = ref({
+    username: null,
+    password: null,
+    isAustralian: null,
+    reason: null,
+    gender: null,
+});
+
+//提交表单（保存成功记录）
+const submitForm = () => {
+    validateName(true);
+    if(!error.value.username && !error.value.password){
+      submittedCards.value.push({...formData.value});
+      clearForm();
+    }
+};
+
+//清空表单
+const clearForm = () => {
+  formData.value = {
+    username: '',
+    password: '',
+    isAustralian: false,
+    reason: '',
+    gender: ''
+  }
+};
+
+//提交成功后保存到 submittedCards 列表中
 const submittedCards = ref([]);
 
-const submitForm = () => {
-    submittedCards.value.push({
-        ...formData.value
-    });
+//对表单中的 username 字段进行验证，并显示或清除错误信息
+const validateName = (blur) => {
+  if (formData.value.username.length < 3){
+    if (blur) errors.value.username = "Name must be at least 3 characters";
+  } else {
+    errors.value.username = null;
+  }
 };
+
+//检查用户输入的密码是否满足多个安全性要求
+const validatePassword = (blur) => {
+  const password = formData.value.password;
+  const minLength = 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  if (password.length < minLength) {
+    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`;
+  } else if (!hasUppercase) {
+    if (blur) errors.value.password = "Password must contain at least one uppercase letter.";
+  } else if (!hasLowercase) {
+    if (blur) errors.value.password = "Password must contain at least one lowercase letter.";
+  } else if (!hasNumber) {
+    if (blur) errors.value.password = "Password must contain at least one number.";
+  } else if (!hasSpecialChar) {
+    if (blur) errors.value.password = "Password must contain at least one special character.";
+  } else {
+    errors.value.password = null;
+  }
+};
+
+
+
 </script>
 
 <style scoped>
