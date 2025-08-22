@@ -35,8 +35,11 @@
                   type="checkbox"
                   class="form-check-input"
                   id="isAustralian"
+                  @blur="() => validateResident(true)"
+                  @input="() => validateResident(false)"
                   v-model="formData.isAustralian"
                 />
+                <div v-if="errors.isAustralian" class="text-danger">{{ errors.isAustralian }}</div>
                 <label class="form-check-label" for="isAustralian">
                   Australian Resident?
                 </label>
@@ -47,12 +50,15 @@
               <select
                 class="form-select"
                 id="gender"
+                @blur="() => validateGender(true)"
+                  @input="() => validateGender(false)"
                 v-model="formData.gender"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
           </div>
 
@@ -95,7 +101,14 @@
          </ul>
       </div>
    </div>
-</div>
+  </div>
+  <DataTable :value="submittedCards" tableStyle="min-width: 50rem">
+        <Column field="username" header="Username" />
+        <Column field="password" header="Password" />
+        <Column field="isAustralian" header="Australian Resident" />
+        <Column field="gender" header="Gender" />
+        <Column field="reason" header="Reason" />
+      </DataTable>
 </template>
 
 
@@ -103,6 +116,9 @@
 <script setup>
 // Our logic will go here
 import { ref } from 'vue';
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+
 
 //保存表单数据
 const formData = ref({
@@ -125,7 +141,10 @@ const errors = ref({
 //提交表单（保存成功记录）
 const submitForm = () => {
     validateName(true);
-    if(!error.value.username && !error.value.password){
+    validatePassword(true);
+    validateResident(true);
+    validateGender(true);
+    if(!errors.value.username && !errors.value.password && !errors.value.isAustralian && !errors.value.gender){
       submittedCards.value.push({...formData.value});
       clearForm();
     }
@@ -177,6 +196,22 @@ const validatePassword = (blur) => {
     errors.value.password = null;
   }
 };
+
+const validateResident = (blur) => {
+  if (!formData.value.isAustralian){
+    if(blur) errors.value.isAustralian = 'You must be an Australian to continue'
+  } else {
+      errors.value.isAustralian = null;
+  }
+};
+
+const validateGender = (blur) => {
+  if (!formData.value.gender){
+    if(blur) errors.value.gender = 'Please select your gender'
+  } else {
+      errors.value.gender = null;
+  }
+}
 
 
 
