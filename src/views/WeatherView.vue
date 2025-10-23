@@ -57,7 +57,7 @@ export default {
     },
   },
   mounted() {
-    // 自动尝试定位获取天气
+
     this.fetchCurrentLocationWeather();
   },
   methods: {
@@ -70,7 +70,7 @@ export default {
             const url = `${BASE_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${apikey}&units=metric`;
             await this.fetchWeatherData(url);
           },
-          // 如果定位失败就默认显示 Melbourne
+
           async () => {
             this.city = "Melbourne";
             await this.searchByCity();
